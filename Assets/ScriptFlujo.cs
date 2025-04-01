@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Text.RegularExpressions;
 
 public class ScriptFlujo : MonoBehaviour
 {
@@ -17,6 +18,20 @@ public class ScriptFlujo : MonoBehaviour
     public Canvas navConduccion;
     public Canvas destFavoritos;
 
+    //Recuperar contrasena
+    public InputField correoRecu;
+    public Text errorMessageContrasena;
+    private string emailPattern = @"^[^@\s]+@[^@\s]+.[^@\s]+$";
+
+    //Registro 1
+    public InputField inNombre;
+    public InputField inApellidos;
+    public InputField inCorreo;
+    public InputField inContrasena;
+    public Text errNombre;
+    public Text errApellidos;
+    public Text errCorreo;
+    public Text errContrasena;
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +50,47 @@ public class ScriptFlujo : MonoBehaviour
         navConduccion.gameObject.SetActive( false);
         destFavoritos.gameObject.SetActive(false);
 
+    }
+
+    public bool CheckEmail(InputField inputF, Text errorMessage)
+    {
+        bool isValid = true;
+        string email = inputF.text;
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            errorMessage.text = "El campo de correo no puede estar vacío.";
+            isValid = false;
+        }
+        else if (!Regex.IsMatch(email, emailPattern))
+        {
+            errorMessage.text = "Formato de correo no válido.";
+            isValid = false;
+        }
+        else
+        {
+            errorMessage.text = "";
+            isValid = true;
+        }
+        return isValid;
+    }
+
+    public bool CheckOther(InputField inputF, Text errorMessage)
+    {
+        bool isValid = true;
+        string other = inputF.text;
+
+        if (string.IsNullOrWhiteSpace(other))
+        {
+            errorMessage.text = "El campo no puede estar vacío.";
+            isValid = false;
+        }
+        else
+        {
+            errorMessage.text = "";
+            isValid = true;
+        }
+        return isValid;
     }
 
     public void inicio_a_creditos()
@@ -63,9 +119,29 @@ public class ScriptFlujo : MonoBehaviour
 
     public void registro1_a_registro2()
     {
-        //Meter aquí comprobación de los campos oblicgatorios de registro 1
-        registro1.gameObject.SetActive(false);
-        registro2.gameObject.SetActive(true);
+        bool result = true;
+        if (!CheckOther(inNombre, errNombre))
+        {
+            result = false;
+        }
+        if (!CheckEmail(inCorreo, errCorreo))
+        {
+            result = false;
+        }
+        if (!CheckOther(inApellidos, errApellidos))
+        {
+            result = false;
+        }
+        if (!CheckOther(inContrasena, errContrasena))
+        {
+            result = false;
+        }
+        if (result)
+        {
+            registro1.gameObject.SetActive(false);
+            registro2.gameObject.SetActive(true);
+        }
+
     }
 
     public void registro2_a_registro1()
@@ -88,8 +164,11 @@ public class ScriptFlujo : MonoBehaviour
 
     public void recordarContrasena_a_correoContrasena()
     {
-        recordarContrasena.gameObject.SetActive(false);
-        correoContrasena.gameObject.SetActive(true);
+        if (CheckEmail(correoRecu,errorMessageContrasena))
+        {
+            recordarContrasena.gameObject.SetActive(false);
+            correoContrasena.gameObject.SetActive(true);
+        }
     }
 
     public void correoContrasena_a_incio()

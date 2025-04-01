@@ -34,6 +34,7 @@ public class ControlCamposVacios : MonoBehaviour
         {
             errorMessage.text = "";
         }
+        return isValid;
     }
 
 }

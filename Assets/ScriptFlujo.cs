@@ -18,12 +18,18 @@ public class ScriptFlujo : MonoBehaviour
     public Canvas navConduccion;
     public Canvas destFavoritos;
 
-    //Recuperar contrasena
+    // Login
+    public Text errorCorreo;
+    public Text errorContrasenia;
+    public InputField correoInicio;
+    public InputField contraseniaInicio;
+
+    // Recuperar contrasena
     public InputField correoRecu;
     public Text errorMessageContrasena;
     private string emailPattern = @"^[^@\s]+@[^@\s]+.[^@\s]+$";
 
-    //Registro 1
+    // Registro 1
     public InputField inNombre;
     public InputField inApellidos;
     public InputField inCorreo;
@@ -32,6 +38,9 @@ public class ScriptFlujo : MonoBehaviour
     public Text errApellidos;
     public Text errCorreo;
     public Text errContrasena;
+
+    // Navegación Inicio
+    public InputField destino;
 
     // Start is called before the first frame update
     void Start()
@@ -185,14 +194,31 @@ public class ScriptFlujo : MonoBehaviour
 
     public void inicio_a_navInicio()
     {
-        inicio.gameObject.SetActive( false);
-        navInicio.gameObject.SetActive( true);
+        bool result = true;
+
+        if (!CheckEmail(correoInicio, errorCorreo)) {
+            result = false;
+        }
+        if (!CheckOther(contraseniaInicio, errorContrasenia))
+        {
+            result = false;
+        }
+
+        if (result)
+        {
+            inicio.gameObject.SetActive( false);
+            navInicio.gameObject.SetActive( true);
+        }
+        
     }
 
     public void navInicio_a_navConduccion()
     {
-        navInicio.gameObject.SetActive(false);
-        navConduccion.gameObject.SetActive(true);
+        if (!string.IsNullOrWhiteSpace(destino.text))
+        {
+            navInicio.gameObject.SetActive(false);
+            navConduccion.gameObject.SetActive(true);
+        }
     }
 
     public void navConduccion_a_navInicio()
@@ -211,5 +237,11 @@ public class ScriptFlujo : MonoBehaviour
     {
         destFavoritos.gameObject.SetActive(false);
         navInicio.gameObject.SetActive(true);
+    }
+
+    public void destinosFav_a_navConduccion()
+    {
+        destFavoritos.gameObject.SetActive(false);
+        navConduccion.gameObject.SetActive(true);
     }
 }
